@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="sf-queryallFlow" doc:id="5b802186-4f7b-4131-8b3e-9c0f5e964845" >
+		<http:listener doc:name="Listener" doc:id="1fd976ef-738a-4a6a-a5fd-72a7f3c90fee" config-ref="HTTP_Listener_config" path="/queryall"/>
+		<logger level="INFO" doc:name="Logger" doc:id="a724417d-10e9-4a14-813f-d63fa59bf2aa" message='#["sf queryall flow"]'/>
+		<salesforce:query-all doc:name="Query all" doc:id="75639a9e-a054-422e-9fa5-23fc7f84aac4" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query ><![CDATA[select salutation, firstName, lastName, email from contact]]></salesforce:salesforce-query>
+		</salesforce:query-all>
+		<logger level="INFO" doc:name="Logger" doc:id="b4efe421-767c-494c-a222-7ddb33573433" message="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="65692a21-9506-42e5-8064-ce5d6b690484" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
